@@ -22,14 +22,14 @@ Route::group(['namespace' => 'V1', 'prefix' => 'v1', 'as' => 'api.v1.'], functio
         Route::get('oauth', [AuthController::class, 'connect'])->name('connect');
     });
 
-    // Route::group(['middleware' => ['MsGraphAuthenticated']], function(){
-        Route::get('callback', [AuthController::class, 'callback'])->name('callback');
-        // Route::middleware('auth:api')->group( function () {
-            Route::get('profile/{size}/image', [AuthController::class, 'showProfileImg'])->name('showProfile');
+    // Route::group(['middleware' => ['web']], function(){
+    //     Route::get('callback', [AuthController::class, 'callback'])->name('callback');
+    //     // Route::middleware('auth:api')->group( function () {
+    //         Route::get('profile/{size}/image', [AuthController::class, 'showProfileImg'])->name('showProfile');
 
             
-        // });
+    //     // });
     // });
-    
+
 });
 
