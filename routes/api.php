@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\V1\AuthController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -14,12 +16,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['namespace' => 'V1', 'prefix' => 'v1', 'as' => 'api.v1.'], function(){
+
+    Route::group(['middleware' => [ 'guest']], function(){
+        Route::get('oauth', [AuthController::class, 'connect'])->name('connect');
+    });
+
+    // Route::group(['middleware' => ['MsGraphAuthenticated']], function(){
+        Route::get('callback', [AuthController::class, 'callback'])->name('callback');
+        // Route::middleware('auth:api')->group( function () {
+            Route::get('profile/{size}/image', [AuthController::class, 'showProfileImg'])->name('showProfile');
+
+            
+        // });
+    // });
+    
 });
 
-Route::group(['namespace' => 'V1', 'prefix' => 'v1', 'as' => 'api.v1.'], function(){
-    Route::get('test', function (Request $request) {
-        return "Vijay";
-    });
-});
