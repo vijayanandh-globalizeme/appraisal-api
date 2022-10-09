@@ -4,7 +4,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\V1\AuthController;
 
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,18 +17,21 @@ use App\Http\Controllers\API\V1\AuthController;
 
 Route::group(['namespace' => 'V1', 'prefix' => 'v1', 'as' => 'api.v1.'], function(){
 
-    Route::group(['middleware' => [ 'guest']], function(){
+    Route::group(['middleware' => ['guest']], function(){
         Route::get('oauth', [AuthController::class, 'connect'])->name('connect');
+        Route::get('callback', [AuthController::class, 'callback'])->name('callback');
     });
 
-    // Route::group(['middleware' => ['web']], function(){
-    //     Route::get('callback', [AuthController::class, 'callback'])->name('callback');
-    //     // Route::middleware('auth:api')->group( function () {
-    //         Route::get('profile/{size}/image', [AuthController::class, 'showProfileImg'])->name('showProfile');
+    Route::middleware('auth:api')->group( function () {
 
-            
-    //     // });
-    // });
+        Route::get('user-details', [AuthController::class, 'getUserData'])->name('getUserData');
+
+        // Common routes
+        Route::post('validate-token', function(){
+            return response()->json(['tokenValid' => true]);
+        })->name('tokenValidation');
+
+    });
 
 });
 
