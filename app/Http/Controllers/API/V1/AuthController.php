@@ -78,7 +78,8 @@ class AuthController extends Controller
                                     $tokenResult->token->expires_at
                                 )->toDateTimeString()
                             ]);
-                            return redirect()->away('http://localhost:4200/#/login?'.$data);
+                            $appURL = config('azure.ngAppUri');
+                            return redirect()->away($appURL.'/#/login?'.$data);
                         }
                     } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
                         abort(404);
