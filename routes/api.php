@@ -2,6 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\V1\AuthController;
+use App\Http\Controllers\API\V1\ReviewQuestionController;
+use App\Http\Controllers\API\V1\UserReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,12 +17,29 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['namespace' => 'V1', 'prefix' => 'v1', 'as' => 'api.v1.'], function(){
+
+    Route::group(['middleware' => ['guest']], function(){
+        Route::get('oauth', [AuthController::class, 'connect'])->name('connect');
+        Route::get('callback', [AuthController::class, 'callback'])->name('callback');
+    });
+
+
+    Route::group(['middleware' => ['auth:api']], function(){
+
+        Route::get('user-details', [AuthController::class, 'getUserData'])->name('getUserData');
+        Route::get('get-users', [ReviewQuestionController::class, 'getUsers'])->name('getUsers');
+        Route::get('review-question', [ReviewQuestionController::class, 'index'])->name('getRevQuestion');
+        Route::post('save-review', [UserReviewController::class, 'store'])->name('storeReview');
+        Route::get('user/{id}/avatar', [AuthController::class, 'userPics'])->name('userPics');
+
+        // Common routes
+        Route::post('validate-token', function(){
+            return response()->json(['tokenValid' => true]);
+        })->name('tokenValidation');
+
+    });
+
+
 });
 
-Route::group(['namespace' => 'V1', 'prefix' => 'v1', 'as' => 'api.v1.'], function(){
-    Route::get('test', function (Request $request) {
-        return "Vijay";
-    });
-});
