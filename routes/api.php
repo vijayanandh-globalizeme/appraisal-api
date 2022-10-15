@@ -24,12 +24,14 @@ Route::group(['namespace' => 'V1', 'prefix' => 'v1', 'as' => 'api.v1.'], functio
         Route::get('callback', [AuthController::class, 'callback'])->name('callback');
     });
 
-    Route::middleware('auth:api')->group( function () {
+
+    Route::group(['middleware' => ['auth:api']], function(){
 
         Route::get('user-details', [AuthController::class, 'getUserData'])->name('getUserData');
         Route::get('get-users', [ReviewQuestionController::class, 'getUsers'])->name('getUsers');
         Route::get('review-question', [ReviewQuestionController::class, 'index'])->name('getRevQuestion');
         Route::post('save-review', [UserReviewController::class, 'store'])->name('storeReview');
+        Route::get('user/{id}/avatar', [AuthController::class, 'userPics'])->name('userPics');
 
         // Common routes
         Route::post('validate-token', function(){

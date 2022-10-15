@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Libraries\MSGraph;
+use Illuminate\Support\Facades\Storage;
 
 
 class AuthController extends Controller
@@ -61,6 +62,15 @@ class AuthController extends Controller
                             $token->expires_at = Carbon::now()->addHour(1);
                             $token->save();
 
+                            // Update the User Avatar
+                            $avatar = $msGraph->getAvatar();
+                            $imageName = 'avatar.jpeg';
+                            if(!Storage::exists('/app/users/'.$user->uuid)) {
+                                Storage::disk('local')->makeDirectory('users/'.$user->uuid);
+                            }
+                            Storage::disk('local')->put('users/'.$user->uuid.'/'.$imageName, $avatar);
+
+                            // JSON Response 
                             $data = http_build_query([
                                 'access_token' => $tokenResult->accessToken,
                                 'token_type' => 'Bearer',
@@ -79,14 +89,24 @@ class AuthController extends Controller
         abort(404);
     }
 
-    public function getUserData(Request $request){
+    public function getUserData(){
         $user = auth()->user();
         return response()->json([
             'name' => $user->name,
             'email' => $user->email,
-            'role' => 2,
-            'pics' => '',
+            'role' => $user->role->slug,
+            'uuid' => $user->uuid,
         ]);
+    }
+
+    public function userPics($id){
+        $fileName = 'users/'.$id.'/avatar.jpeg';
+        if(Storage::exists($fileName)){
+            $avatar = Storage::disk('local')->get($fileName);
+        }else{
+            $avatar = Storage::disk('local')->get('users/avatar.jpeg');
+        }
+        return response($avatar)->header('Content-Type', 'image/jpeg');
     }
 
 }

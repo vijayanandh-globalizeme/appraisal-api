@@ -8,6 +8,8 @@ use Microsoft\Graph\Model;
 class MSGraph {
 
     public $oauthClient;
+    private $accessToken;
+    private $graph;
 
     public function __construct(){
         $this->oauthClient = new \League\OAuth2\Client\Provider\GenericProvider([
@@ -26,14 +28,22 @@ class MSGraph {
         $accessToken = $this->oauthClient->getAccessToken('authorization_code', [
             'code' => $authCode
         ]);
-
-        $graph = new Graph();
-        $graph->setAccessToken($accessToken->getToken());
-
-        $user = $graph->createRequest('GET', '/me')
+        $this->graph = new Graph();
+        $this->graph->setAccessToken($accessToken->getToken());
+        $user = $this->graph->createRequest('GET', '/me')
                       ->setReturnType(Model\User::class)
                       ->execute();
         return $user->getMail();
+    }
+
+    public function getAvatar(){
+        try {
+            $photo = $this->graph->createRequest("GET", "/me/photo/\$value")->execute();
+            $avatar = $photo->getRawBody();
+        } catch (Exception $e) {
+            $avatar = null;
+        }
+        return $avatar;   
     }
 
 }
