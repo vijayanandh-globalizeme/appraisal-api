@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\V1\AuthController;
+use App\Http\Controllers\API\V1\ReviewQuestionController;
+use App\Http\Controllers\API\V1\UserReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +27,9 @@ Route::group(['namespace' => 'V1', 'prefix' => 'v1', 'as' => 'api.v1.'], functio
     Route::middleware('auth:api')->group( function () {
 
         Route::get('user-details', [AuthController::class, 'getUserData'])->name('getUserData');
+        Route::get('get-users', [ReviewQuestionController::class, 'getUsers'])->name('getUsers');
+        Route::get('review-question', [ReviewQuestionController::class, 'index'])->name('getRevQuestion');
+        Route::post('save-review', [UserReviewController::class, 'store'])->name('storeReview');
 
         // Common routes
         Route::post('validate-token', function(){
@@ -32,6 +37,7 @@ Route::group(['namespace' => 'V1', 'prefix' => 'v1', 'as' => 'api.v1.'], functio
         })->name('tokenValidation');
 
     });
+
 
 });
 
