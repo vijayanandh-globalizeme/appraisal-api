@@ -8,11 +8,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use App\Traits\HasUUID;
+use App\Traits\HasPermissionsTrait;
 use App\Models\Role;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasUUID;
+    use HasApiTokens, HasFactory, Notifiable, HasUUID, HasPermissionsTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -45,8 +46,8 @@ class User extends Authenticatable
     ];
 
 
-    public function role(){
-        return $this->belongsTo('App\Models\Role');
+    public function roles(){
+        return $this->belongsTo('App\Models\Role', 'role_id', 'id');
     }
 
 }

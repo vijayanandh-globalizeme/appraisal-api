@@ -67,5 +67,7 @@ class Kernel extends HttpKernel
 
         //Idle session timeout
         'sessionExpired' => \App\Http\Middleware\SessionExpired::class,
+        // User Role validation
+        'role' => \App\Http\Middleware\RoleMiddleware::class,
     ];
 }
