@@ -28,7 +28,7 @@ class UserReviewController extends Controller
                                     ->whereYear('created_at', $year)
                                     ->where('user_id', $user->id)->get();
             return response()->json([
-                'reviews' => $reviews
+                'data' => $reviews
             ]);
         }
         return response()->json("Something went wrong", 400);
