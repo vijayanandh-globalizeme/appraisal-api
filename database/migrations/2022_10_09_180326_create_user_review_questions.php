@@ -18,6 +18,7 @@ class CreateUserReviewQuestions extends Migration
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('colleague_id');
             $table->string('data');
+            $table->string('total', 10);
             $table->text('comments');
             $table->timestamps();
         });

@@ -90,7 +90,7 @@ class ReviewQuestionController extends Controller
     public function getUsers(){
         $user_id = auth()->id();
         return response()->json([
-            "data" => User::select('uuid', 'name')->where('id', '!=', $user_id)->get()
+            "data" => User::select('uuid', 'name', 'email')->where('id', '!=', $user_id)->orderBy('name')->get()
         ]);
     }
 }

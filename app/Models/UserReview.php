@@ -10,6 +10,15 @@ class UserReview extends Model
     use HasFactory;
 
     /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'colleague_id'
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -18,6 +27,7 @@ class UserReview extends Model
         'user_id',
         'colleague_id',
         'data',
+        'total',
         'comments',
         'created_at',
         'updated_at'
