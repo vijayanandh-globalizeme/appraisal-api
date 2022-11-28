@@ -48,19 +48,19 @@ class AuthController extends Controller
                         $msUserMail = $msGraph->setAccessToken($authCode);
                         $user = User::where('email', $msUserMail)->first();
                         if (empty($user)) {
-                            abort(404);
+                            return response()->json("Page not found", 404);
                         }
                         
                         if(Auth::loginUsingId($user->id)){
                             Auth::user()->tokens->each(function($token, $key) {
                                 $token->delete();
                             });
-                        
                             // Generate token for one week expire time
                             $tokenResult = $user->createToken('Personal Access Token');
                             $token = $tokenResult->token;
                             $token->expires_at = Carbon::now()->addHour(1);
                             $token->save();
+                            // dd($user, $tokenResult);
 
                             // Update the User Avatar
                             $avatar = $msGraph->getAvatar();
@@ -82,12 +82,13 @@ class AuthController extends Controller
                             return redirect()->away($appURL.'/#/login?'.$data);
                         }
                     } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
-                        abort(404);
+                        dd($e);
+                        return response()->json("Page not found", 404);
                     }
                 }
             }
         }
-        abort(404);
+        return response()->json("Page not found", 404);
     }
 
     public function getUserData(){
@@ -95,7 +96,7 @@ class AuthController extends Controller
         return response()->json([
             'name' => $user->name,
             'email' => $user->email,
-            'role' => $user->role->slug,
+            'role' => $user->roles->slug,
             'uuid' => $user->uuid,
         ]);
     }
