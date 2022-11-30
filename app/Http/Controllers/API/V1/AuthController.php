@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Libraries\MSGraph;
 use Illuminate\Support\Facades\Storage;
+use Validator;
 
 
 class AuthController extends Controller
@@ -109,6 +110,25 @@ class AuthController extends Controller
             $avatar = Storage::disk('local')->get('users/avatar.jpeg');
         }
         return response($avatar)->header('Content-Type', 'image/jpeg');
+    }
+
+    public function login(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'email' => 'email|required',
+            'password' => 'required'
+        ]);
+        if ($validator->fails()) return response()->json($validator->errors(), 422);
+        if (!auth()->attempt($data)) {
+            return response(['error_message' => 'Incorrect Details. 
+            Please try again']);
+        }
+
+        $token = auth()->user()->createToken('API Token')->accessToken;
+
+        return response(['user' => auth()->user(), 'token' => $token]);
+
     }
 
 }

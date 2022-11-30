@@ -24,6 +24,8 @@ Route::group(['namespace' => 'V1', 'prefix' => 'v1', 'as' => 'api.v1.'], functio
         Route::get('callback', [AuthController::class, 'callback'])->name('callback');
     });
 
+    Route::get('login', [AuthController::class, 'login']);
+
     Route::get('user/{id}/avatar', [AuthController::class, 'userPics'])->name('userPics');
 
     Route::group(['middleware' => ['auth:api']], function(){
