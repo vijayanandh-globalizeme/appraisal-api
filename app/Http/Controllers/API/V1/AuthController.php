@@ -79,7 +79,6 @@ class AuthController extends Controller
                                 )->toDateTimeString()
                             ]);
                             $appURL = config('azure.ngAppUri');
-                            dd($data);
                             return redirect()->away($appURL.'/#/login?'.$data);
                         }
                     } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
