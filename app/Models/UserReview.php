@@ -27,8 +27,6 @@ class UserReview extends Model
         'user_id',
         'colleague_id',
         'data',
-        'total',
-        'comments',
         'created_at',
         'updated_at'
     ];

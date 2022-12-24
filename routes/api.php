@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\V1\AuthController;
 use App\Http\Controllers\API\V1\ReviewQuestionController;
 use App\Http\Controllers\API\V1\UserReviewController;
+use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,9 @@ Route::group(['namespace' => 'V1', 'prefix' => 'v1', 'as' => 'api.v1.'], functio
         Route::get('callback', [AuthController::class, 'callback'])->name('callback');
     });
 
+    Route::get('uuid', function(){
+        return Str::uuid()->toString();
+    });
     Route::get('user/{id}/avatar', [AuthController::class, 'userPics'])->name('userPics');
 
     Route::group(['middleware' => ['auth:api']], function(){
