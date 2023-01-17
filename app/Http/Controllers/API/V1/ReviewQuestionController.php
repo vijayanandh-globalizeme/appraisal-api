@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ReviewQuestion;
+use App\Models\ReviewQuestionCategory;
 use App\Models\User;
 
 class ReviewQuestionController extends Controller
@@ -17,7 +18,8 @@ class ReviewQuestionController extends Controller
     public function index()
     {
         return response()->json([
-            "data" => ReviewQuestion::where('status', 1)->get()
+            "data" => ReviewQuestion::where('status', 1)->get(),
+            "category" => ReviewQuestionCategory::get()
         ]);
     }
 
