@@ -20,6 +20,8 @@ use Illuminate\Support\Str;
 
 Route::group(['namespace' => 'V1', 'prefix' => 'v1', 'as' => 'api.v1.'], function(){
 
+
+
     Route::group(['middleware' => ['guest']], function(){
         Route::get('oauth', [AuthController::class, 'connect'])->name('connect');
         Route::get('callback', [AuthController::class, 'callback'])->name('callback');
@@ -47,6 +49,7 @@ Route::group(['namespace' => 'V1', 'prefix' => 'v1', 'as' => 'api.v1.'], functio
             Route::post('validate-access', function(){
                 return true;
             })->name('validateAccess');
+            Route::get('/download-report/{id}/{type}', [UserReviewController::class, 'downloadReport']);
         });
     });
 

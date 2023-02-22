@@ -8,9 +8,13 @@ use App\Models\UserReview;
 use App\Models\User;
 use Validator;
 use App\Models\ReviewQuestion;
+use App\Models\ReviewQuestionCategory;
+use PDF;
+
 
 class UserReviewController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -25,7 +29,7 @@ class UserReviewController extends Controller
             if(isset($data['year']) && $data['year'] != null){
                 $year = $data['year'];
             }
-            $reviews = UserReview::select('data','created_at')
+            $reviews = UserReview::select('id','data','created_at')
                                     ->whereYear('created_at', $year)
                                     ->where('user_id', $user->id)->get();
             return response()->json([
@@ -71,7 +75,9 @@ class UserReviewController extends Controller
             $data['user_id'] = $user->id;
             $data['colleague_id'] = auth()->id();
             $data['data'] = json_encode($data['review']);
-            if(UserReview::create($data)){
+            $reviewId = UserReview::create($data)->id;
+            if($reviewId){
+                $this->downloadReport($reviewId, 'email');
                 return response()->json([
                     "message" => "Success"
                 ]);
@@ -124,4 +130,43 @@ class UserReviewController extends Controller
     {
         //
     }
+
+    // Generate PDF
+    public function downloadReport($id, $type) {
+        $reviews['data'] = UserReview::with('user')->where('id', $id)->first()->toArray();
+        $userData = json_decode($reviews['data']['data'], true);
+        $subData = [];
+        foreach ($userData as $value) {
+            foreach ($value as $key => $answer) {
+                $subData[$key] = $answer;
+                break;
+            }
+            
+        }
+        $reviews['data']['answer'] = $subData;
+        $reviews["questions"] = ReviewQuestion::select("id","name","label","category_id")
+                                        ->where('status', 1)->get()->toArray();
+        $reviews["category"] = ReviewQuestionCategory::get()->toArray();
+        view()->share('reviews',$reviews);
+        $pdf = PDF::loadView('pdf.report', $reviews);
+
+
+        $data["email"] = "vijay.anandh@globalizeme.com";
+        $data["title"] = " Review submitted for ".$reviews['data']["user"]["name"];
+
+        if($type == 'download'){
+           return $pdf->download('report.pdf'); 
+        }
+
+        if($type == 'email'){
+            return \Mail::send('emails.report', $data, function($message)use($data, $pdf) {
+                $message->to($data["email"], $data["email"])
+                        ->from('no-reply@gm360.com', 'GM360 Report')
+                        ->subject($data["title"])
+                        ->attachData($pdf->output(), "report.pdf");
+            });
+        }
+        return;
+    }
+
 }

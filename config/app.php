@@ -177,6 +177,11 @@ return [
 
         Laravel\Passport\PassportServiceProvider::class,
 
+        // PDF BUILDER plugin
+        Barryvdh\DomPDF\ServiceProvider::class,
+
+        Collective\Html\HtmlServiceProvider::class,
+
 
     ],
 
@@ -232,6 +237,9 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
+        'Form' => Collective\Html\FormFacade::class,
+        'HTML' => Collective\Html\HtmlFacade::class,
 
     ],
 
