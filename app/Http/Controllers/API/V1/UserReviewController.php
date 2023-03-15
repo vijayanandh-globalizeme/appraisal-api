@@ -150,17 +150,14 @@ class UserReviewController extends Controller
         view()->share('reviews',$reviews);
         $pdf = PDF::loadView('pdf.report', $reviews);
 
-
-        $data["email"] = "vijay.anandh@globalizeme.com";
+        $data["email"] = ["vijay.anandh@globalizeme.com", "vinodh.bilavendran@globalizeme.com"];
         $data["title"] = " Review submitted for ".$reviews['data']["user"]["name"];
-
         if($type == 'download'){
            return $pdf->download('report.pdf'); 
         }
-
         if($type == 'email'){
             return \Mail::send('emails.report', $data, function($message)use($data, $pdf) {
-                $message->to($data["email"], $data["email"])
+                $message->to($data["email"])
                         ->from('no-reply@gm360.com', 'GM360 Report')
                         ->subject($data["title"])
                         ->attachData($pdf->output(), "report.pdf");
